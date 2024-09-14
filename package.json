@@ -10,7 +10,8 @@
         "prettify": "prettier \"./**/*.{js,jsx,json,css,ts,tsx}\" --write",
         "preview": "vite preview",
         "test": "vitest run",
-        "test-watch": "vite watch"
+        "test-watch": "vite watch",
+        "prepare": "husky"
     },
     "dependencies": {
         "@emotion/react": "^11.11.1",
@@ -23,6 +24,8 @@
         "react-dom": "^18.2.0"
     },
     "devDependencies": {
+        "@commitlint/cli": "^19.5.0",
+        "@commitlint/config-conventional": "^19.5.0",
         "@testing-library/jest-dom": "^6.5.0",
         "@testing-library/react": "^16.0.1",
         "@types/node": "^22.5.5",
