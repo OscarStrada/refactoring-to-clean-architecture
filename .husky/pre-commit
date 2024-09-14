@@ -1,0 +1,2 @@
+#!/bin/sh
+pnpm prettify && pnpm lint && pnpm test
