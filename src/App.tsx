@@ -1,4 +1,4 @@
-import { AppProvider } from "./context/AppProvider";
+import { AppProvider } from "./presentation/context/AppProvider";
 import { ProductsPage } from "./pages/ProductsPage";
 
 function App() {

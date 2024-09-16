@@ -1,4 +1,4 @@
-import { RemoteProduct } from "@/api/StoreApi";
+import { RemoteProduct } from "@/data/api/StoreApi";
 import { screen, waitFor, within } from "@testing-library/react";
 import { expect } from "vitest";
 import userEvent from "@testing-library/user-event";

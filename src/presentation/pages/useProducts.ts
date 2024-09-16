@@ -1,5 +1,5 @@
-import { RemoteProduct, StoreApi } from "../api/StoreApi";
-import { useReload } from "../hooks/useReload";
+import { RemoteProduct, StoreApi } from "../../data/api/StoreApi";
+import { useReload } from "../../presentation/hooks/useReload";
 import { useEffect, useState } from "react";
 
 export const useProducts = (storeApi: StoreApi) => {

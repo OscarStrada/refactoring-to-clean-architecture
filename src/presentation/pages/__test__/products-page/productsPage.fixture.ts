@@ -1,6 +1,6 @@
 import { MockWebServer } from "@/tests/mockWebServer";
 import productsResponse from "./data/productsResponse.json";
-import { RemoteProduct } from "@/api/StoreApi";
+import { RemoteProduct } from "@/data/api/StoreApi";
 
 export const getProducts = (mockWebServer: MockWebServer): RemoteProduct[] => {
     mockWebServer.addRequestHandlers([
