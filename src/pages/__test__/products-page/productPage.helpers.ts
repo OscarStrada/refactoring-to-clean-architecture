@@ -63,6 +63,20 @@ export const verifyDialog = (dialog: HTMLElement, product: RemoteProduct) => {
     expect(dialogScope.getByDisplayValue(product.price));
 };
 
+export const verifyPrice = async (dialog: HTMLElement, price: string) => {
+    const dialogScope = within(dialog);
+    const priceTextBox = dialogScope.getByRole("textbox", { name: "Price" });
+
+    await userEvent.clear(priceTextBox);
+
+    await userEvent.type(priceTextBox, price);
+};
+
+export const verifyError = async (dialog: HTMLElement, error: string) => {
+    const dialogScope = within(dialog);
+    await dialogScope.findByText(error);
+};
+
 export const waitToTableIsLoaded = async () => {
     await waitFor(async () =>
         expect((await screen.findAllByRole("row")).length).toBeGreaterThan(1)
