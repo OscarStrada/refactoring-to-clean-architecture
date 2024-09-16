@@ -15,6 +15,7 @@ import {
     verifyPrice,
     verifyPriceAndStatusInRow,
     verifyRows,
+    verifySaveButtonIsDisabled,
     waitToTableIsLoaded,
 } from "./productPage.helpers";
 
@@ -76,6 +77,7 @@ describe("ProductsPage", () => {
 
             await verifyPrice(dialog, "-1");
             await verifyError(dialog, "Invalid price format");
+            await verifySaveButtonIsDisabled(dialog);
         });
 
         test("Should show an error for non numbers", async () => {
@@ -87,6 +89,7 @@ describe("ProductsPage", () => {
 
             await verifyPrice(dialog, "nonnumeric");
             await verifyError(dialog, "Only numbers are allowed");
+            await verifySaveButtonIsDisabled(dialog);
         });
 
         test("Should show an error for prices greater than 999.99", async () => {
@@ -98,6 +101,7 @@ describe("ProductsPage", () => {
 
             await verifyPrice(dialog, "1000");
             await verifyError(dialog, "The max possible price is 999.99");
+            await verifySaveButtonIsDisabled(dialog);
         });
 
         test("Should update price and set to active for a price greater than 0", async () => {
