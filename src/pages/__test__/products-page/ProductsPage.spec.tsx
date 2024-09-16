@@ -111,6 +111,20 @@ describe("ProductsPage", () => {
             await savePrice(dialog);
             await verifyPriceAndStatusInRow(0, newPrice, "active");
         });
+
+        test("Should set status to inactive when price is equal to 0", async () => {
+            getProducts(mockWebServer);
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+            const dialog = await openDialogToEditPrice(0);
+
+            const newPrice = "0";
+
+            await verifyPrice(dialog, newPrice);
+            await savePrice(dialog);
+            await verifyPriceAndStatusInRow(0, newPrice, "inactive");
+        });
     });
 });
 
