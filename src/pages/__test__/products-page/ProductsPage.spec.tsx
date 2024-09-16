@@ -7,7 +7,9 @@ import { getEmptyProducts, getProducts } from "./productsPage.fixture";
 import {
     openDialogToEditPrice,
     verifyDialog,
+    verifyError,
     verifyHeader,
+    verifyPrice,
     verifyRows,
     waitToTableIsLoaded,
 } from "./productPage.helpers";
@@ -59,6 +61,17 @@ describe("ProductsPage", () => {
             await waitToTableIsLoaded();
             const dialog = await openDialogToEditPrice(0);
             verifyDialog(dialog, products[0]);
+        });
+
+        test("Should show an error for negative prices", async () => {
+            getProducts(mockWebServer);
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+            const dialog = await openDialogToEditPrice(0);
+
+            await verifyPrice(dialog, "-1");
+            await verifyError(dialog, "Invalid price format");
         });
     });
 });
