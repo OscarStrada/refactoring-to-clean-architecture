@@ -5,8 +5,10 @@ import { ProductsPage } from "../../../pages/ProductsPage";
 import { MockWebServer } from "../../../tests/mockWebServer";
 import { getEmptyProducts, getProducts } from "./productsPage.fixture";
 import {
+    changeToNonAdminUser,
     openDialogToEditPrice,
     savePrice,
+    tryOpenDialogToEditPrice,
     verifyDialog,
     verifyError,
     verifyHeader,
@@ -124,6 +126,17 @@ describe("ProductsPage", () => {
             await verifyPrice(dialog, newPrice);
             await savePrice(dialog);
             await verifyPriceAndStatusInRow(0, newPrice, "inactive");
+        });
+
+        test("Should show an error if user is not admin", async () => {
+            getProducts(mockWebServer);
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+
+            await changeToNonAdminUser();
+            await tryOpenDialogToEditPrice(0);
+            await screen.findByText(/only admin users can edit the price of a product/i);
         });
     });
 });
