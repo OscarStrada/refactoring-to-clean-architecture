@@ -46,6 +46,8 @@ export default {
                 "performance",
                 "error",
                 "eslint",
+                "util",
+                "helper",
             ],
         ],
     },
