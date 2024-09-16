@@ -6,10 +6,12 @@ import { MockWebServer } from "../../../tests/mockWebServer";
 import { getEmptyProducts, getProducts } from "./productsPage.fixture";
 import {
     openDialogToEditPrice,
+    savePrice,
     verifyDialog,
     verifyError,
     verifyHeader,
     verifyPrice,
+    verifyPriceAndStatusInRow,
     verifyRows,
     waitToTableIsLoaded,
 } from "./productPage.helpers";
@@ -72,6 +74,42 @@ describe("ProductsPage", () => {
 
             await verifyPrice(dialog, "-1");
             await verifyError(dialog, "Invalid price format");
+        });
+
+        test("Should show an error for non numbers", async () => {
+            getProducts(mockWebServer);
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+            const dialog = await openDialogToEditPrice(0);
+
+            await verifyPrice(dialog, "nonnumeric");
+            await verifyError(dialog, "Only numbers are allowed");
+        });
+
+        test("Should show an error for prices greater than 999.99", async () => {
+            getProducts(mockWebServer);
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+            const dialog = await openDialogToEditPrice(0);
+
+            await verifyPrice(dialog, "1000");
+            await verifyError(dialog, "The max possible price is 999.99");
+        });
+
+        test("Should update price and set to active for a price greater than 0", async () => {
+            getProducts(mockWebServer);
+            renderComponent(<ProductsPage />);
+
+            await waitToTableIsLoaded();
+            const dialog = await openDialogToEditPrice(0);
+
+            const newPrice = "129.5";
+
+            await verifyPrice(dialog, newPrice);
+            await savePrice(dialog);
+            await verifyPriceAndStatusInRow(0, newPrice, "active");
         });
     });
 });
