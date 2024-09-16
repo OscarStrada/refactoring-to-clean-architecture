@@ -10,7 +10,7 @@
         "prettify": "prettier \"./**/*.{js,jsx,json,css,ts,tsx}\" --write",
         "preview": "vite preview",
         "test": "vitest run",
-        "test-watch": "vite watch",
+        "test-watch": "vitest watch",
         "prepare": "husky"
     },
     "dependencies": {
