@@ -23,7 +23,7 @@ const baseColumn: Partial<GridColDef<Product>> = {
 
 const storeApi = new StoreApi();
 
-function createGetProductsUseCase() {
+function createGetProductsUseCase(): GetProductsUseCase {
     return new GetProductsUseCase(storeApi);
 }
 
