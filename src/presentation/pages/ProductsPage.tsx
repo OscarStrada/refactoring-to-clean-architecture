@@ -10,30 +10,14 @@ import { MainAppBar } from "../components/MainAppBar";
 import styled from "@emotion/styled";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
-import { StoreApi } from "../../data/api/StoreApi";
 import { useProducts } from "./useProducts";
-import { GetProductsUseCase } from "../../domain/getProductsUseCase";
 import { Product } from "../../domain/product";
-import { ProductApiRepository } from "../../data/productApiRepository";
-import { GetProductByIdUseCase } from "../../domain/getProductByIdUseCase";
+import { CompositionRoot } from "../../compositionRoot";
 
 const baseColumn: Partial<GridColDef<Product>> = {
     disableColumnMenu: true,
     sortable: false,
 };
-
-const storeApi = new StoreApi();
-
-function createGetProductsUseCase(): GetProductsUseCase {
-    const productRepository = new ProductApiRepository(storeApi);
-
-    return new GetProductsUseCase(productRepository);
-}
-
-function createGetProductByIdUseCase(): GetProductByIdUseCase {
-    const productRepository = new ProductApiRepository(storeApi);
-    return new GetProductByIdUseCase(productRepository);
-}
 
 export const ProductsPage: React.FC = () => {
     /**
@@ -45,8 +29,14 @@ export const ProductsPage: React.FC = () => {
 
     const [priceError, setPriceError] = useState<string | undefined>(undefined);
 
-    const getProductsUseCase = useMemo(() => createGetProductsUseCase(), []);
-    const getProductByIdUseCase = useMemo(() => createGetProductByIdUseCase(), []);
+    const getProductsUseCase = useMemo(
+        () => CompositionRoot.getInstance().provideGetProductsUseCase(),
+        []
+    );
+    const getProductByIdUseCase = useMemo(
+        () => CompositionRoot.getInstance().provideGetProductByIdUseCase(),
+        []
+    );
 
     const {
         products,
@@ -83,6 +73,7 @@ export const ProductsPage: React.FC = () => {
     // FIXME: Save price
     async function saveEditPrice(): Promise<void> {
         if (editingProduct) {
+            const storeApi = CompositionRoot.getInstance().provideStoreApi();
             const remoteProduct = await storeApi.get(editingProduct.id);
 
             if (!remoteProduct) return;
