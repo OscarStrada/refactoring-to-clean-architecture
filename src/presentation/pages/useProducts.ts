@@ -2,11 +2,13 @@ import { Product } from "../../domain/product";
 import { useReload } from "../../presentation/hooks/useReload";
 import { useCallback, useEffect, useState } from "react";
 import { GetProductsUseCase } from "../../domain/getProductsUseCase";
-import { StoreApi } from "../../data/api/StoreApi";
 import { useAppContext } from "../context/useAppContext";
-import { buildProduct } from "../../data/productApiRepository";
+import { GetProductByIdUseCase, ResourceNotFound } from "../../domain/getProductByIdUseCase";
 
-export const useProducts = (getProductsUseCase: GetProductsUseCase, storeApi: StoreApi) => {
+export const useProducts = (
+    getProductsUseCase: GetProductsUseCase,
+    getProductByIdUseCase: GetProductByIdUseCase
+) => {
     const { currentUser } = useAppContext();
     const [reloadKey, reload] = useReload();
 
@@ -30,18 +32,19 @@ export const useProducts = (getProductsUseCase: GetProductsUseCase, storeApi: St
                     return;
                 }
 
-                storeApi
-                    .get(id)
-                    .then(buildProduct)
-                    .then(product => {
-                        setEditingProduct(product);
-                    })
-                    .catch(() => {
-                        setError(`Product with id ${id} not found`);
-                    });
+                try {
+                    const product = await getProductByIdUseCase.execute(id);
+                    setEditingProduct(product);
+                } catch (error) {
+                    if (error instanceof ResourceNotFound) {
+                        setError(error.message);
+                    } else {
+                        setError("Unexpected error");
+                    }
+                }
             }
         },
-        [currentUser.isAdmin, storeApi]
+        [currentUser.isAdmin, getProductByIdUseCase]
     );
 
     const cancelEditPrice = useCallback(() => {
