@@ -31,7 +31,8 @@ function createGetProductsUseCase(): GetProductsUseCase {
 }
 
 function createGetProductByIdUseCase(): GetProductByIdUseCase {
-    return new GetProductByIdUseCase(storeApi);
+    const productRepository = new ProductApiRepository(storeApi);
+    return new GetProductByIdUseCase(productRepository);
 }
 
 export const ProductsPage: React.FC = () => {
