@@ -27,8 +27,6 @@ export const ProductsPage: React.FC = () => {
 
     const [snackBarSuccess, setSnackBarSuccess] = useState<string>();
 
-    const [priceError, setPriceError] = useState<string | undefined>(undefined);
-
     const getProductsUseCase = useMemo(
         () => CompositionRoot.getInstance().provideGetProductsUseCase(),
         []
@@ -44,30 +42,16 @@ export const ProductsPage: React.FC = () => {
         updatingQuantity,
         editingProduct,
         setEditingProduct,
-        error,
         cancelEditPrice,
+        onChangePrice,
+        error,
+        priceError,
     } = useProducts(getProductsUseCase, getProductByIdUseCase);
 
     useEffect(() => setSnackBarError(error), [error]);
 
-    // FIXME: Price validations
     function handleChangePrice(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
-        if (!editingProduct) return;
-
-        const isValidNumber = !isNaN(+event.target.value);
-        setEditingProduct({ ...editingProduct, price: event.target.value });
-
-        if (!isValidNumber) {
-            setPriceError("Only numbers are allowed");
-        } else {
-            if (!priceRegex.test(event.target.value)) {
-                setPriceError("Invalid price format");
-            } else if (+event.target.value > 999.99) {
-                setPriceError("The max possible price is 999.99");
-            } else {
-                setPriceError(undefined);
-            }
-        }
+        onChangePrice(event.target.value);
     }
 
     // FIXME: Save price
@@ -261,5 +245,3 @@ const StatusContainer = styled.div<{ status: ProductStatus }>`
     border-radius: 20px;
     width: 100px;
 `;
-
-const priceRegex = /^\d+(\.\d{1,2})?$/;
