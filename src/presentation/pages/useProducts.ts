@@ -3,7 +3,9 @@ import { useReload } from "../../presentation/hooks/useReload";
 import { useCallback, useEffect, useState } from "react";
 import { GetProductsUseCase } from "../../domain/getProductsUseCase";
 import { useAppContext } from "../context/useAppContext";
-import { GetProductByIdUseCase, ResourceNotFound } from "../../domain/getProductByIdUseCase";
+import { GetProductByIdUseCase } from "../../domain/getProductByIdUseCase";
+import { Price, ValidationError } from "../../domain/price";
+import { ResourceNotFound } from "../../domain/productRepository";
 
 export const useProducts = (
     getProductsUseCase: GetProductsUseCase,
@@ -56,18 +58,15 @@ export const useProducts = (
     function onChangePrice(price: string): void {
         if (!editingProduct) return;
 
-        const isValidNumber = !isNaN(+price);
-        setEditingProduct({ ...editingProduct, price });
-
-        if (!isValidNumber) {
-            setPriceError("Only numbers are allowed");
-        } else {
-            if (!priceRegex.test(price)) {
-                setPriceError("Invalid price format");
-            } else if (+price > 999.99) {
-                setPriceError("The max possible price is 999.99");
+        try {
+            setEditingProduct({ ...editingProduct, price });
+            Price.create(price);
+            setPriceError(undefined);
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                setPriceError(error.message);
             } else {
-                setPriceError(undefined);
+                setPriceError("Unexpected error occurred");
             }
         }
     }
@@ -84,5 +83,3 @@ export const useProducts = (
         priceError,
     };
 };
-
-const priceRegex = /^\d+(\.\d{1,2})?$/;
