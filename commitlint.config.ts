@@ -51,6 +51,7 @@ export default {
                 "class",
                 "types",
                 "page",
+                "hook",
             ],
         ],
     },
