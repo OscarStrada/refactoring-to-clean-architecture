@@ -7,6 +7,10 @@ import { GetProductByIdUseCase } from "../../domain/getProductByIdUseCase";
 import { Price, ValidationError } from "../../domain/price";
 import { ResourceNotFound } from "../../domain/productRepository";
 
+export type ProductStatus = "active" | "inactive";
+
+export type ProductViewModel = Product & { status: ProductStatus };
+
 export const useProducts = (
     getProductsUseCase: GetProductsUseCase,
     getProductByIdUseCase: GetProductByIdUseCase
@@ -14,8 +18,8 @@ export const useProducts = (
     const { currentUser } = useAppContext();
     const [reloadKey, reload] = useReload();
 
-    const [products, setProducts] = useState<Product[]>([]);
-    const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+    const [products, setProducts] = useState<ProductViewModel[]>([]);
+    const [editingProduct, setEditingProduct] = useState<ProductViewModel | undefined>(undefined);
 
     const [error, setError] = useState<string>();
     const [priceError, setPriceError] = useState<string | undefined>(undefined);
@@ -24,7 +28,7 @@ export const useProducts = (
         getProductsUseCase.execute().then(products => {
             console.debug("Reloading", reloadKey);
 
-            setProducts(products);
+            setProducts(products.map(buildProductViewModel));
         });
     }, [reloadKey, getProductsUseCase]);
 
@@ -38,7 +42,7 @@ export const useProducts = (
 
                 try {
                     const product = await getProductByIdUseCase.execute(id);
-                    setEditingProduct(product);
+                    setEditingProduct(buildProductViewModel(product));
                 } catch (error) {
                     if (error instanceof ResourceNotFound) {
                         setError(error.message);
@@ -83,3 +87,10 @@ export const useProducts = (
         priceError,
     };
 };
+
+export function buildProductViewModel(product: Product): ProductViewModel {
+    return {
+        ...product,
+        status: +product.price === 0 ? "inactive" : "active",
+    };
+}
